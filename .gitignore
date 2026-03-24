@@ -1,0 +1,190 @@
+# ============================================
+# 通用忽略规则
+# ============================================
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE 配置文件
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# 日志文件
+*.log
+logs/
+log/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.bak
+*.cache
+
+# ============================================
+# Node.js / Vue.js 项目 (client_code & manage_code)
+# ============================================
+
+# 依赖目录
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+package-lock.json
+yarn.lock
+
+# 构建输出
+dist/
+build/
+*.tgz
+
+# 本地环境配置
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vue.js 特定
+.nuxt/
+.output/
+.vite/
+*.local
+
+# 测试覆盖率
+coverage/
+.nyc_output/
+
+# ============================================
+# Java / Spring Boot 项目 (server_code)
+# ============================================
+
+# 编译输出
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Spring Boot
+spring-boot-starter-*.log
+
+# ============================================
+# 数据库
+# ============================================
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+*.h2.db
+
+# 数据库备份
+*.sql.bak
+*.sql.gz
+*.sql.zip
+
+# ============================================
+# 上传文件 / 静态资源
+# ============================================
+
+# 用户上传的文件
+upload/
+uploads/
+files/
+file/
+static/upload/
+static/uploads/
+
+# 临时上传目录
+temp/
+tmp/
+
+# ============================================
+# 敏感信息 / 配置文件
+# ============================================
+
+# 密钥文件
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# 配置文件（包含敏感信息）
+application-local.yml
+application-local.properties
+application-dev.yml
+application-dev.properties
+application-prod.yml
+application-prod.properties
+
+# 其他敏感文件
+.secret
+secrets/
+config/local*
+config/private*
+
+# ============================================
+# 其他
+# ============================================
+
+# 压缩包
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+
+# 文档生成
+docs/_build/
+site/
+
+# 其他
+*.pid
+*.seed
+*.pid.lock
+.eslintcache
+.stylelintcache
+.parcel-cache
+
+
+# 忽略 manage 目录下的所有 CSS 文件
+server_code/target
