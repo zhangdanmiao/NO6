@@ -28,6 +28,7 @@ import com.cl.entity.YishengyuyueEntity;
 import com.cl.entity.view.YishengyuyueView;
 
 import com.cl.service.YishengyuyueService;
+import com.cl.service.JiuzhentongzhiService;
 import com.cl.service.TokenService;
 import com.cl.utils.PageUtils;
 import com.cl.utils.R;
@@ -47,6 +48,8 @@ import com.cl.utils.CommonUtil;
 public class YishengyuyueController {
     @Autowired
     private YishengyuyueService yishengyuyueService;
+    @Autowired
+    private JiuzhentongzhiService jiuzhentongzhiService;
 
 
 
@@ -183,15 +186,19 @@ public class YishengyuyueController {
     @RequestMapping("/shBatch")
     @Transactional
     @SysLog("审核医生预约")
-    public R update(@RequestBody Long[] ids, @RequestParam String sfsh, @RequestParam String shhf){
-        List<YishengyuyueEntity> list = new ArrayList<YishengyuyueEntity>();
-        for(Long id : ids) {
-            YishengyuyueEntity yishengyuyue = yishengyuyueService.selectById(id);
-            yishengyuyue.setSfsh(sfsh);
-            yishengyuyue.setShhf(shhf);
-            list.add(yishengyuyue);
+    public R update(@RequestParam Integer ids, @RequestParam String sfsh, @RequestParam String shhf){
+       
+        YishengyuyueEntity yishengyuyue = yishengyuyueService.selectById(ids);
+        String oldSfsh = yishengyuyue.getSfsh();
+        yishengyuyue.setSfsh(sfsh);
+        yishengyuyue.setShhf(shhf);
+        
+        
+        if("是".equals(sfsh) && !"是".equals(oldSfsh)) {
+            jiuzhentongzhiService.createAndSendAllNotifications(yishengyuyue);
         }
-        yishengyuyueService.updateBatchById(list);
+        
+        yishengyuyueService.updateById(yishengyuyue);
         return R.ok();
     }
 

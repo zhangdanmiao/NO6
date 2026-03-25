@@ -23,6 +23,18 @@
 							</el-input>
 						</div>
 					</div>
+					<div class="search_view">
+						<div class="search_label">
+							发送状态：
+						</div>
+						<div class="search_box">
+							<el-select class="search_inp" v-model="searchQuery.fasongzhuangtai" placeholder="发送状态" clearable>
+								<el-option label="待发送" :value="0"></el-option>
+								<el-option label="发送成功" :value="1"></el-option>
+								<el-option label="发送失败" :value="2"></el-option>
+							</el-select>
+						</div>
+					</div>
 					<div class="search_btn_view">
 						<el-button class="search_btn" type="primary" @click="searchClick()" size="small">搜索</el-button>
 					</div>
@@ -31,6 +43,10 @@
 					<el-button class="add_btn" type="success" @click="addClick" v-if="btnAuth('jiuzhentongzhi','新增')">
 						<i class="iconfont icon-xinzeng1"></i>
 						新增
+					</el-button>
+					<el-button class="retry_btn" type="warning" :disabled="selRows.length?false:true" @click="retryBatchClick"  v-if="btnAuth('jiuzhentongzhi','修改')">
+						<i class="iconfont icon-xiugai5"></i>
+						批量重试
 					</el-button>
 					<el-button class="del_btn" type="danger" :disabled="selRows.length?false:true" @click="delClick(null)"  v-if="btnAuth('jiuzhentongzhi','删除')">
 						<i class="iconfont icon-shanchu4"></i>
@@ -128,6 +144,55 @@
 						{{scope.row.shouji}}
 					</template>
 				</el-table-column>
+				<el-table-column min-width="120"
+					:resizable='true'
+					:sortable='true'
+					align="left"
+					header-align="left"
+					prop="tongzhileixing"
+					label="通知类型">
+					<template #default="scope">
+						<el-tag v-if="scope.row.tongzhileixing == 0" type="primary">预约确认</el-tag>
+						<el-tag v-else-if="scope.row.tongzhileixing == 1" type="success">就诊前提醒</el-tag>
+						<el-tag v-else-if="scope.row.tongzhileixing == 2" type="warning">检查准备</el-tag>
+						<el-tag v-else type="info">其他</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column min-width="100"
+					:resizable='true'
+					:sortable='true'
+					align="left"
+					header-align="left"
+					prop="fasongzhuangtai"
+					label="发送状态">
+					<template #default="scope">
+						<el-tag v-if="scope.row.fasongzhuangtai == 0" type="info">待发送</el-tag>
+						<el-tag v-else-if="scope.row.fasongzhuangtai == 1" type="success">发送成功</el-tag>
+						<el-tag v-else-if="scope.row.fasongzhuangtai == 2" type="danger">发送失败</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column min-width="80"
+					:resizable='true'
+					:sortable='true'
+					align="left"
+					header-align="left"
+					prop="chongshicishu"
+					label="重试次数">
+					<template #default="scope">
+						{{scope.row.chongshicishu || 0}}
+					</template>
+				</el-table-column>
+				<el-table-column min-width="150"
+					:resizable='true'
+					:sortable='true'
+					align="left"
+					header-align="left"
+					prop="shibaiyuanyin"
+					label="失败原因">
+					<template #default="scope">
+						{{scope.row.shibaiyuanyin || '-'}}
+					</template>
+				</el-table-column>
 				<el-table-column min-width="140"
 					:resizable='true'
 					:sortable='true'
@@ -139,21 +204,27 @@
 						{{scope.row.tongzhibeizhu}}
 					</template>
 				</el-table-column>
-				<el-table-column label="操作" width="300" :resizable='true' :sortable='true' align="left" header-align="left">
+				<el-table-column label="操作" width="400" :resizable='true' :sortable='true' align="left" header-align="left">
 					<template #default="scope">
 						<el-button class="view_btn" type="info" v-if=" btnAuth('jiuzhentongzhi','查看')" @click="infoClick(scope.row.id)">
 							<i class="iconfont icon-sousuo2"></i>
 							查看
 						</el-button>
+						<el-button class="retry_single_btn" type="warning" @click="retryClick(scope.row)" v-if=" btnAuth('jiuzhentongzhi','修改') && scope.row.fasongzhuangtai == 2 && scope.row.chongshicishu < 3">
+							<i class="iconfont icon-xiugai5"></i>
+							重试
+						</el-button>
 						<el-button class="edit_btn" type="primary" @click="editClick(scope.row.id)" v-if=" btnAuth('jiuzhentongzhi','修改')">
 							<i class="iconfont icon-xiugai5"></i>
-							修改						</el-button>
+							修改
+						</el-button>
+						<el-button class="mark_btn" type="success" @click="markHandledClick(scope.row.id)" v-if=" btnAuth('jiuzhentongzhi','修改') && scope.row.fasongzhuangtai == 2">
+							<i class="iconfont icon-dingdan3"></i>
+							标记处理
+						</el-button>
 						<el-button class="del_btn" type="danger" @click="delClick(scope.row.id)"  v-if="btnAuth('jiuzhentongzhi','删除')">
 							<i class="iconfont icon-shanchu4"></i>
-							删除						</el-button>
-						<el-button class="cross_btn" v-if="btnAuth('jiuzhentongzhi','签到')" type="success" @click="jiuzhenqiandaoCrossAddOrUpdateHandler(scope.row,'cross','','','','')">
-							<i class="iconfont icon-dingdan3"></i>
-							签到
+							删除
 						</el-button>
 					</template>
 				</el-table-column>
@@ -241,6 +312,9 @@
 		if(searchQuery.value.zhanghao&&searchQuery.value.zhanghao!=''){
 			params['zhanghao'] = '%' + searchQuery.value.zhanghao + '%'
 		}
+		if(searchQuery.value.fasongzhuangtai !== undefined && searchQuery.value.fasongzhuangtai !== null && searchQuery.value.fasongzhuangtai !== ''){
+			params['fasongzhuangtai'] = searchQuery.value.fasongzhuangtai
+		}
 		context.$http({
 			url: `${tableName}/page`,
 			method: 'get',
@@ -250,6 +324,75 @@
 			list.value = res.data.data.list
 			total.value = Number(res.data.data.total)
 		})
+	}
+	
+	//单个重试
+	const retryClick = (row) => {
+		ElMessageBox.confirm(`是否重试该通知？`, '提示', {
+			confirmButtonText: '是',
+			cancelButtonText: '否',
+			type: 'warning',
+		}).then(() => {
+			context.$http({
+				url: `${tableName}/retry/${row.id}`,
+				method: 'get'
+			}).then(res => {
+				context?.$toolUtil.message('重试成功', 'success',()=>{
+					getList()
+				})
+			}).catch(err => {
+				context?.$toolUtil.message('重试失败', 'error')
+			})
+		}).catch(_ => {})
+	}
+	
+	//批量重试
+	const retryBatchClick = () => {
+		if (!selRows.value.length) {
+			context?.$toolUtil.message('请选择要重试的通知', 'warning')
+			return
+		}
+		let ids = []
+		for (let x in selRows.value) {
+			ids.push(selRows.value[x].id)
+		}
+		ElMessageBox.confirm(`是否重试选中的${ids.length}条通知？`, '提示', {
+			confirmButtonText: '是',
+			cancelButtonText: '否',
+			type: 'warning',
+		}).then(() => {
+			context.$http({
+				url: `${tableName}/retryBatch`,
+				method: 'post',
+				data: ids
+			}).then(res => {
+				context?.$toolUtil.message(res.data.msg || '批量重试完成', 'success',()=>{
+					getList()
+				})
+			}).catch(err => {
+				context?.$toolUtil.message('批量重试失败', 'error')
+			})
+		}).catch(_ => {})
+	}
+	
+	//标记处理
+	const markHandledClick = (id) => {
+		ElMessageBox.confirm(`是否标记该通知为已处理？`, '提示', {
+			confirmButtonText: '是',
+			cancelButtonText: '否',
+			type: 'warning',
+		}).then(() => {
+			context.$http({
+				url: `${tableName}/markHandled/${id}`,
+				method: 'get'
+			}).then(res => {
+				context?.$toolUtil.message('标记成功', 'success',()=>{
+					getList()
+				})
+			}).catch(err => {
+				context?.$toolUtil.message('标记失败', 'error')
+			})
+		}).catch(_ => {})
 	}
 	//删
 	const delClick = (id) => {

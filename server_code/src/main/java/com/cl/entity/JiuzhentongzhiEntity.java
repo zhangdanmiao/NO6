@@ -103,6 +103,37 @@ public class JiuzhentongzhiEntity<T> implements Serializable {
 					
 	private String tongzhibeizhu;
 	
+	/**
+	 * 通知类型：0-预约确认，1-就诊前提醒，2-检查准备事项
+	 */
+	private Integer tongzhileixing;
+	
+	/**
+	 * 发送状态：0-待发送，1-发送成功，2-发送失败
+	 */
+	private Integer fasongzhuangtai;
+	
+	/**
+	 * 失败原因
+	 */
+	private String shibaiyuanyin;
+	
+	/**
+	 * 重试次数
+	 */
+	private Integer chongshicishu;
+	
+	/**
+	 * 下次重试时间
+	 */
+	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
+	@DateTimeFormat
+	private Date xiacichongshishijian;
+	
+	/**
+	 * 关联预约ID
+	 */
+	private Long yuyueid;
 
 	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat
@@ -216,6 +247,54 @@ public class JiuzhentongzhiEntity<T> implements Serializable {
 	 */
 	public String getTongzhibeizhu() {
 		return tongzhibeizhu;
+	}
+	
+	public Integer getTongzhileixing() {
+		return tongzhileixing;
+	}
+	
+	public void setTongzhileixing(Integer tongzhileixing) {
+		this.tongzhileixing = tongzhileixing;
+	}
+	
+	public Integer getFasongzhuangtai() {
+		return fasongzhuangtai;
+	}
+	
+	public void setFasongzhuangtai(Integer fasongzhuangtai) {
+		this.fasongzhuangtai = fasongzhuangtai;
+	}
+	
+	public String getShibaiyuanyin() {
+		return shibaiyuanyin;
+	}
+	
+	public void setShibaiyuanyin(String shibaiyuanyin) {
+		this.shibaiyuanyin = shibaiyuanyin;
+	}
+	
+	public Integer getChongshicishu() {
+		return chongshicishu;
+	}
+	
+	public void setChongshicishu(Integer chongshicishu) {
+		this.chongshicishu = chongshicishu;
+	}
+	
+	public Date getXiacichongshishijian() {
+		return xiacichongshishijian;
+	}
+	
+	public void setXiacichongshishijian(Date xiacichongshishijian) {
+		this.xiacichongshishijian = xiacichongshishijian;
+	}
+	
+	public Long getYuyueid() {
+		return yuyueid;
+	}
+	
+	public void setYuyueid(Long yuyueid) {
+		this.yuyueid = yuyueid;
 	}
 
 }

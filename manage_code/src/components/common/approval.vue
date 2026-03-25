@@ -76,13 +76,12 @@
 		}
 		ruleFormRef.value.validate((valid) => {
 			if (valid) {
-				let url = `${tableName.value}/update`
+				// 使用shBatch接口进行审核，以触发通知发送
+				let url = `${tableName.value}/shBatch?ids=${approvalForm.value.id}&sfsh=${approvalForm.value.sfsh}&shhf=${approvalForm.value.shhf}`
 				context?.$http({
 					url: url,
-					method: 'post',
-					data: approvalForm.value
+					method: 'post'
 				}).then(res => {
-
 					context?.$toolUtil.message('审核成功', 'success', obj => {
 						approvalVisible.value = false
 					})

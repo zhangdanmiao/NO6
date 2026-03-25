@@ -191,14 +191,63 @@ public class JiuzhentongzhiController {
         return R.ok();
     }
     
+    /**
+     * 手动重试通知
+     */
+    @RequestMapping("/retry/{id}")
+    @SysLog("手动重试通知")
+    public R retry(@PathVariable("id") Long id){
+        boolean result = jiuzhentongzhiService.retryNotification(id);
+        if(result) {
+            return R.ok("通知重试成功");
+        } else {
+            return R.error("通知重试失败");
+        }
+    }
+    
+    /**
+     * 批量手动重试通知
+     */
+    @RequestMapping("/retryBatch")
+    @SysLog("批量手动重试通知")
+    public R retryBatch(@RequestBody Long[] ids){
+        int successCount = 0;
+        for(Long id : ids) {
+            if(jiuzhentongzhiService.retryNotification(id)) {
+                successCount++;
+            }
+        }
+        return R.ok("成功重试 " + successCount + " 条通知");
+    }
+    
+    /**
+     * 获取失败通知列表
+     */
+    @RequestMapping("/failedList")
+    public R failedList(){
+        List<JiuzhentongzhiEntity> failedList = jiuzhentongzhiService.getFailedNotifications();
+        return R.ok().put("data", failedList);
+    }
+    
+    /**
+     * 标记通知为已处理
+     */
+    @RequestMapping("/markHandled/{id}")
+    @SysLog("标记通知为已处理")
+    public R markHandled(@PathVariable("id") Long id){
+        JiuzhentongzhiEntity notification = jiuzhentongzhiService.selectById(id);
+        if(notification != null) {
+            notification.setChongshicishu(3);
+            notification.setXiacichongshishijian(null);
+            jiuzhentongzhiService.updateById(notification);
+            return R.ok("标记成功");
+        }
+        return R.error("通知不存在");
+    }
+    
+
 	
-
-
-
-
-
-
-
+	
 
 
 }
