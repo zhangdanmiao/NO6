@@ -190,9 +190,13 @@ public class YishengyuyueController {
     @RequestMapping("/shBatch")
     @Transactional
     @SysLog("审核医生预约")
-    public R update(@RequestBody Long[] ids, @RequestParam String sfsh, @RequestParam String shhf){
+    public R shBatch(@RequestBody Map<String, Object> params){
+        List<Integer> idsList = (List<Integer>) params.get("ids");
+        String sfsh = (String) params.get("sfsh");
+        String shhf = (String) params.get("shhf");
+        
         List<YishengyuyueEntity> list = new ArrayList<YishengyuyueEntity>();
-        for(Long id : ids) {
+        for(Integer id : idsList) {
             YishengyuyueEntity yishengyuyue = yishengyuyueService.selectById(id);
             yishengyuyue.setSfsh(sfsh);
             yishengyuyue.setShhf(shhf);
