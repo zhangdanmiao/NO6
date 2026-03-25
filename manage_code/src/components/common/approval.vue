@@ -76,13 +76,18 @@
 		}
 		ruleFormRef.value.validate((valid) => {
 			if (valid) {
-				let url = `${tableName.value}/update`
+				// 使用批量审核接口，支持触发就诊通知
+				let url = `${tableName.value}/shBatch`
+				let params = {
+					ids: [approvalForm.value.id],
+					sfsh: approvalForm.value.sfsh,
+					shhf: approvalForm.value.shhf
+				}
 				context?.$http({
 					url: url,
 					method: 'post',
-					data: approvalForm.value
+					data: params
 				}).then(res => {
-
 					context?.$toolUtil.message('审核成功', 'success', obj => {
 						approvalVisible.value = false
 					})

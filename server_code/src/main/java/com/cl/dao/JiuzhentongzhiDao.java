@@ -26,5 +26,10 @@ public interface JiuzhentongzhiDao extends BaseMapper<JiuzhentongzhiEntity> {
 	
 	JiuzhentongzhiView selectView(@Param("ew") Wrapper<JiuzhentongzhiEntity> wrapper);
 
+	List<Map<String, Object>> selectValue(@Param("params") Map<String, Object> params, @Param("ew") Wrapper<JiuzhentongzhiEntity> wrapper);
+
+	List<Map<String, Object>> selectTimeStatValue(@Param("params") Map<String, Object> params, @Param("ew") Wrapper<JiuzhentongzhiEntity> wrapper);
+
+	List<Map<String, Object>> selectGroup(@Param("params") Map<String, Object> params, @Param("ew") Wrapper<JiuzhentongzhiEntity> wrapper);
 
 }

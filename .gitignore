@@ -79,6 +79,9 @@ coverage/
 target/
 build/
 out/
+server_code/src/main/resources/client/
+server_code/src/main/resources/manage/
+server_code/src/main/resources/static/
 *.class
 *.jar
 *.war
@@ -186,5 +189,3 @@ site/
 .parcel-cache
 
 
-# 忽略 manage 目录下的所有 CSS 文件
-server_code/target

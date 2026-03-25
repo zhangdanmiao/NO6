@@ -13,6 +13,13 @@
         <result property="zhanghao" column="zhanghao"/>
         <result property="shouji" column="shouji"/>
         <result property="tongzhibeizhu" column="tongzhibeizhu"/>
+        <result property="tongzhileixing" column="tongzhileixing"/>
+        <result property="fasongzhuangtai" column="fasongzhuangtai"/>
+        <result property="fasongshijian" column="fasongshijian"/>
+        <result property="shibaiyuanyin" column="shibaiyuanyin"/>
+        <result property="chongshicishu" column="chongshicishu"/>
+        <result property="xiacichongshishijian" column="xiacichongshishijian"/>
+        <result property="guanlianyuyueid" column="guanlianyuyueid"/>
     </resultMap>
 
     <select id="selectListView"
@@ -27,6 +34,36 @@
 		SELECT * FROM jiuzhentongzhi  jiuzhentongzhi <where> 1=1 ${ew.sqlSegment}</where>
 	</select>
 
+	<select id="selectValue" resultType="map" >
+		SELECT ${params.xColumn}, ROUND(sum(${params.yColumn}),1) total FROM jiuzhentongzhi
+		<where> 1=1 ${ew.sqlSegment}</where>
+		group by ${params.xColumn}
+		limit 10
+	</select>
 
+	<select id="selectTimeStatValue" resultType="map" >
+		<if test = 'params.timeStatType == "日"'>
+				SELECT DATE_FORMAT(${params.xColumn},'%Y-%m-%d') ${params.xColumn}, sum(${params.yColumn}) total FROM jiuzhentongzhi
+				<where> 1=1 ${ew.sqlSegment}</where>
+				group by DATE_FORMAT(${params.xColumn},'%Y-%m-%d')
+		</if>
+		<if test = 'params.timeStatType == "月"'>
+				SELECT DATE_FORMAT(${params.xColumn},'%Y-%m') ${params.xColumn}, sum(${params.yColumn}) total FROM jiuzhentongzhi
+				<where> 1=1 ${ew.sqlSegment}</where>
+				group by DATE_FORMAT(${params.xColumn},'%Y-%m')
+		</if>
+		<if test = 'params.timeStatType == "年"'>
+				SELECT DATE_FORMAT(${params.xColumn},'%Y') ${params.xColumn}, sum(${params.yColumn}) total FROM jiuzhentongzhi
+				<where> 1=1 ${ew.sqlSegment}</where>
+				group by DATE_FORMAT(${params.xColumn},'%Y')
+		</if>
+	</select>
+
+	<select id="selectGroup" resultType="map" >
+		SELECT ${params.column} , count(1) total FROM jiuzhentongzhi
+		<where> 1=1 ${ew.sqlSegment}</where>
+		group by ${params.column}
+		limit 10
+	</select>
 
 </mapper>

@@ -28,6 +28,7 @@ import com.cl.entity.YishengyuyueEntity;
 import com.cl.entity.view.YishengyuyueView;
 
 import com.cl.service.YishengyuyueService;
+import com.cl.service.JiuzhentongzhiService;
 import com.cl.service.TokenService;
 import com.cl.utils.PageUtils;
 import com.cl.utils.R;
@@ -47,6 +48,10 @@ import com.cl.utils.CommonUtil;
 public class YishengyuyueController {
     @Autowired
     private YishengyuyueService yishengyuyueService;
+    
+    @Autowired
+    private JiuzhentongzhiService jiuzhentongzhiService;
+
 
 
 
@@ -70,12 +75,14 @@ public class YishengyuyueController {
                     yishengyuyue.setZhanghao((String)request.getSession().getAttribute("username"));
                                     }
                                                                                                                                                                                 EntityWrapper<YishengyuyueEntity> ew = new EntityWrapper<YishengyuyueEntity>();
-                                                                                                                                                                                                                        
+                                                                                                                                                                                                        
         
         
         PageUtils page = yishengyuyueService.queryPage(params, MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, yishengyuyue), params), params));
         return R.ok().put("data", page);
     }
+
+
 
 
 
@@ -190,6 +197,15 @@ public class YishengyuyueController {
             yishengyuyue.setSfsh(sfsh);
             yishengyuyue.setShhf(shhf);
             list.add(yishengyuyue);
+            
+            // 审核通过时，触发就诊通知
+            if("是".equals(sfsh)) {
+                try {
+                    jiuzhentongzhiService.createAndSendNotifications(yishengyuyue);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
         yishengyuyueService.updateBatchById(list);
         return R.ok();
@@ -209,6 +225,7 @@ public class YishengyuyueController {
     }
     
 	
+
 
 
 
